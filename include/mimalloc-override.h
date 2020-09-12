@@ -8,6 +8,13 @@ terms of the MIT license. A copy of the license can be found in the file
 #ifndef MIMALLOC_OVERRIDE_H
 #define MIMALLOC_OVERRIDE_H
 
+// ------------------------------------
+// NOTE: our target environment is wasm
+// this definition already exists but
+// provides some useful restrictions
+#define __wasi__
+// ------------------------------------
+
 /* ----------------------------------------------------------------------------
 This header can be used to statically redirect malloc/free and new/delete
 to the mimalloc variants. This can be useful if one can include this file on

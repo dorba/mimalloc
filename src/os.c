@@ -20,8 +20,11 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc-internal.h"
 #include "mimalloc-atomic.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <string.h>  // strerror
-
+#endif
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -88,11 +91,13 @@ size_t _mi_os_large_page_size() {
   return (large_os_page_size != 0 ? large_os_page_size : _mi_os_page_size());
 }
 
+#ifndef MI_STDLIB_EXTERN // apparently not used
 static bool use_large_os_page(size_t size, size_t alignment) {
   // if we have access, check the size and alignment requirements
   if (large_os_page_size == 0 || !mi_option_is_enabled(mi_option_large_os_pages)) return false;
   return ((size % large_os_page_size) == 0 && (alignment % large_os_page_size) == 0);
 }
+#endif
 
 // round to a good OS allocation size (bounded by max 12.5% waste)
 size_t _mi_os_good_alloc_size(size_t size) {
@@ -242,7 +247,9 @@ static bool mi_os_mem_free(void* addr, size_t size, bool was_committed, mi_stats
   }
 }
 
+#ifndef MI_STDLIB_EXTERN // apparently not used
 static void* mi_os_get_aligned_hint(size_t try_alignment, size_t size);
+#endif
 
 #ifdef _WIN32
 static void* mi_win_virtual_allocx(void* addr, size_t size, size_t try_alignment, DWORD flags) {
@@ -480,10 +487,12 @@ static void* mi_os_get_aligned_hint(size_t try_alignment, size_t size) {
   return (void*)hint;
 }
 #else
+#ifndef MI_STDLIB_EXTERN // apparently not used
 static void* mi_os_get_aligned_hint(size_t try_alignment, size_t size) {
   UNUSED(try_alignment); UNUSED(size);
   return NULL;
 }
+#endif
 #endif
 
 
@@ -510,7 +519,7 @@ static void* mi_os_mem_alloc(size_t size, size_t try_alignment, bool commit, boo
     if (commit) flags |= MEM_COMMIT;
     p = mi_win_virtual_alloc(NULL, size, try_alignment, flags, false, allow_large, is_large);
   #elif defined(__wasi__)
-    *is_large = false;
+    *is_large = false && allow_large; // fix warning (no use of allow_large)
     p = mi_wasm_heap_grow(size, try_alignment);
   #else
     int protect_flags = (commit ? (PROT_WRITE | PROT_READ) : PROT_NONE);
@@ -831,7 +840,7 @@ static  bool mi_os_protectx(void* addr, size_t size, bool protect) {
   BOOL ok = VirtualProtect(start, csize, protect ? PAGE_NOACCESS : PAGE_READWRITE, &oldprotect);
   err = (ok ? 0 : GetLastError());
 #elif defined(__wasi__)
-  err = 0;
+  err = 0 && protect; // fix warning (no usage of protect)
 #else
   err = mprotect(start, csize, protect ? PROT_NONE : (PROT_READ | PROT_WRITE));
   if (err != 0) { err = errno; }
@@ -1118,7 +1127,7 @@ static size_t mi_os_numa_node_countx(void) {
   }
   return ((size_t)numa_max + 1);
 }
-#elif defined(__linux__)
+#elif defined(__linux__) && !defined(MI_STDLIB_EXTERN)
 #include <sys/syscall.h>  // getcpu
 #include <stdio.h>        // access
 

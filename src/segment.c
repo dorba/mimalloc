@@ -8,8 +8,12 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc-internal.h"
 #include "mimalloc-atomic.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <string.h>  // memset
 #include <stdio.h>
+#endif
 
 #define MI_PAGE_HUGE_ALIGN  (256*1024)
 

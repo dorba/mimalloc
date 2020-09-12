@@ -22,6 +22,10 @@ and that the sequence must be smaller or equal to the bits in a field.
 #include "mimalloc.h"
 #include "mimalloc-internal.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#endif
+
 /* -----------------------------------------------------------
   Bitmap definition
 ----------------------------------------------------------- */
@@ -85,7 +89,9 @@ static inline size_t mi_bsr(uintptr_t x) {
   return idx;
 }
 #elif defined(__GNUC__) || defined(__clang__)
+#ifndef MI_STDLIB_EXTERN
 #include <limits.h> // LONG_MAX
+#endif
 #define MI_HAVE_BITSCAN
 #if (INTPTR_MAX == LONG_MAX)
 # define MI_L(x)  x##l

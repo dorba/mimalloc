@@ -8,6 +8,16 @@ terms of the MIT license. A copy of the license can be found in the file
 #ifndef MIMALLOC_INTERNAL_H
 #define MIMALLOC_INTERNAL_H
 
+// ------------------------------------
+// NOTE: our target environment is wasm
+// this definition already exists but
+// provides some useful restrictions
+#define __wasi__
+// ------------------------------------
+// our internal flag for -nostdlib
+#define MI_STDLIB_EXTERN
+// -------------------------------
+
 #include "mimalloc-types.h"
 
 #if (MI_DEBUG>0)

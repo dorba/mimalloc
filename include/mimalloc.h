@@ -8,6 +8,13 @@ terms of the MIT license. A copy of the license can be found in the file
 #ifndef MIMALLOC_H
 #define MIMALLOC_H
 
+// ------------------------------------
+// NOTE: our target environment is wasm
+// this definition already exists but
+// provides some useful restrictions
+#define __wasi__
+// ------------------------------------
+
 #define MI_MALLOC_VERSION 164   // major + 2 digits minor
 
 // ------------------------------------------------------

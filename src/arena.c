@@ -29,10 +29,13 @@ of 256MiB in practice.
 #include "mimalloc-internal.h"
 #include "mimalloc-atomic.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <string.h>  // memset
+#endif
 
 #include "bitmap.inc.c"  // atomic bitmap
-
 
 // os.c
 void* _mi_os_alloc_aligned(size_t size, size_t alignment, bool commit, bool* large, mi_os_tld_t* tld);
@@ -270,7 +273,9 @@ static bool mi_arena_add(mi_arena_t* arena) {
 /* -----------------------------------------------------------
   Reserve a huge page arena.
 ----------------------------------------------------------- */
+#ifndef MI_STDLIB_EXTERN
 #include <errno.h> // ENOMEM
+#endif
 
 // reserve at a specific numa node
 int mi_reserve_huge_os_pages_at(size_t pages, int numa_node, size_t timeout_msecs) mi_attr_noexcept {

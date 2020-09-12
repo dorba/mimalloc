@@ -8,9 +8,12 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc-internal.h"
 #include "mimalloc-atomic.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <stdio.h>  // fputs, stderr
 #include <string.h> // memset
-
+#endif
 
 /* -----------------------------------------------------------
   Statistics operations
@@ -401,7 +404,9 @@ mi_msecs_t _mi_clock_now(void) {
   return mi_to_msecs(t);
 }
 #else
+#ifndef MI_STDLIB_EXTERN
 #include <time.h>
+#endif
 #ifdef CLOCK_REALTIME
 mi_msecs_t _mi_clock_now(void) {
   struct timespec t;
@@ -467,9 +472,15 @@ static void mi_process_info(mi_msecs_t* utime, mi_msecs_t* stime, size_t* peak_r
 }
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__)) || defined(__HAIKU__)
+#ifndef MI_STDLIB_EXTERN
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/resource.h>
+#endif
+// #include <stdio.h>
+// #include <unistd.h>
+// #include <sys/resource.h>
+// #include "time.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <mach/mach.h>

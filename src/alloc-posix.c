@@ -16,9 +16,13 @@ terms of the MIT license. A copy of the license can be found in the file
 // Posix & Unix functions definitions
 // ------------------------------------------------------
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <errno.h>
 #include <string.h>  // memcpy
 #include <stdlib.h>  // getenv
+#endif
 
 #ifndef EINVAL
 #define EINVAL 22

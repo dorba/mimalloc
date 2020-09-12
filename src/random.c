@@ -7,7 +7,11 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc.h"
 #include "mimalloc-internal.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <string.h> // memset
+#endif
 
 /* ----------------------------------------------------------------------------
 We use our own PRNG to keep predictable performance of random number generation
@@ -179,7 +183,9 @@ static bool os_random_buf(void* buf, size_t buf_len) {
 #elif defined(ANDROID) || defined(XP_DARWIN) || defined(__APPLE__) || defined(__DragonFly__) || \
       defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || \
       defined(__sun) || defined(__wasi__)
+#ifndef MI_STDLIB_EXTERN
 #include <stdlib.h>
+#endif
 static bool os_random_buf(void* buf, size_t buf_len) {
   arc4random_buf(buf, buf_len);
   return true;
@@ -238,7 +244,9 @@ static bool os_random_buf(void* buf, size_t buf_len) {
 #elif defined(__APPLE__)
 #include <mach/mach_time.h>
 #else
+#ifndef MI_STDLIB_EXTERN
 #include <time.h>
+#endif
 #endif
 
 uintptr_t _os_random_weak(uintptr_t extra_seed) {

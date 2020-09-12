@@ -8,11 +8,15 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc-internal.h"
 #include "mimalloc-atomic.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <stdio.h>
 #include <stdlib.h> // strtol
 #include <string.h> // strncpy, strncat, strlen, strstr
 #include <ctype.h>  // toupper
 #include <stdarg.h>
+#endif
 
 static uintptr_t mi_max_error_count = 16;  // stop outputting errors after this
 

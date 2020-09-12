@@ -35,7 +35,11 @@ Possible issues:
 #include "mimalloc-internal.h"
 #include "mimalloc-atomic.h"
 
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <string.h>  // memset
+#endif
 
 #include "bitmap.inc.c"
 

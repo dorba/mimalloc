@@ -8,8 +8,20 @@ terms of the MIT license. A copy of the license can be found in the file
 #ifndef MIMALLOC_TYPES_H
 #define MIMALLOC_TYPES_H
 
+// ------------------------------------
+// NOTE: our target environment is wasm
+// this definition already exists but
+// provides some useful restrictions
+#define __wasi__
+// ------------------------------------
+
+#ifdef MI_STDLIB_EXTERN
+#include "mimalloc-stdlib.h"
+#else
 #include <stddef.h>   // ptrdiff_t
 #include <stdint.h>   // uintptr_t, uint16_t, etc
+#endif
+
 #include <mimalloc-atomic.h>  // _Atomic
 
 // Minimal alignment necessary. On most platforms 16 bytes are needed

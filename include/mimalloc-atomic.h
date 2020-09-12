@@ -8,6 +8,13 @@ terms of the MIT license. A copy of the license can be found in the file
 #ifndef MIMALLOC_ATOMIC_H
 #define MIMALLOC_ATOMIC_H
 
+// ------------------------------------
+// NOTE: our target environment is wasm
+// this definition already exists but
+// provides some useful restrictions
+#define __wasi__
+// ------------------------------------
+
 // ------------------------------------------------------
 // Atomics
 // We need to be portable between C, C++, and MSVC.
